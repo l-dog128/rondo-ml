@@ -58,9 +58,6 @@ for episode in tqdm(range(N_EPISODES)):
     
     if(step_count % TARGET_UPDATE_PERDIOD == 0):
       agent.update_targetNet()
-    
-          
-          
       
   agent.decay_epsilon()
 

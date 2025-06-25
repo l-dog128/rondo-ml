@@ -11,8 +11,8 @@ def showStatistics(env,agent):
           mode=convolution_mode
       ) / window
 
-  # Smooth over a 50 episode window
-  rolling_length = 50
+  # Smooth over a 25 episode window
+  rolling_length = 25
   fig, axs = plt.subplots(ncols=3, figsize=(12, 5))
 
   axs[0].set_title("Episode rewards")
