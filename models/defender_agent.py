@@ -89,11 +89,11 @@ class Defender_Agent():
     state_batch = np.array(state_batch).flatten().reshape(10,batch_size).transpose()
     next_state_batch = np.array(next_state_batch).flatten().reshape(10,batch_size).transpose()
     
-    state_batch = torch.FloatTensor(state_batch)
-    next_state_batch = torch.FloatTensor(next_state_batch)
-    reward_batch = torch.FloatTensor(reward_batch)
-    terminated_batch = torch.FloatTensor(terminated_batch)
-    action_batch = torch.LongTensor(action_batch).unsqueeze(1)
+    state_batch = torch.FloatTensor(state_batch).to(self.device)
+    next_state_batch = torch.FloatTensor(next_state_batch).to(self.device)
+    reward_batch = torch.FloatTensor(reward_batch).to(self.device)
+    terminated_batch = torch.FloatTensor(terminated_batch).to(self.device)
+    action_batch = torch.LongTensor(action_batch).unsqueeze(1).to(self.device)
         
     
     q_values = self.policy_net(state_batch).gather(1, action_batch).squeeze()
