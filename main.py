@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from models import defender_agent
 import logging
 
-N_EPISODES =  10_000 + 1
+N_EPISODES =  10000 + 1
 TRAINING_PERIOD = 20_000
 # constants hyperparameters
 # BATCH_SIZE is the number of transitions sampled from the replay buffer

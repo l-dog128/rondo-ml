@@ -1,4 +1,3 @@
-from collections import defaultdict
 import gymnasium as gym
 import math
 import numpy as np
@@ -6,9 +5,8 @@ import torch
 from utils import memory_buffer
 import models.dqn_network as dqn_network
 """
-The agennt implements epsilon-greedy strategy for selecting the best action to choose
+ An implementation of a Deep Q network hopefully this works?
 """
-
 class Defender_Agent():
   def __init__(self,
                env:gym.Env,
@@ -62,21 +60,11 @@ class Defender_Agent():
     self.steps_done += 1
     if np.random.random() > self.epsilon :
       # TODO this might be a bug but we will see 
-      # obs = np.concatenate(list(obs.values()))
-      obs = np.array(obs).flatten()
-      obs = torch.tensor(obs,dtype=torch.float32,device=self.device).unsqueeze(0)
-      # print(obs)
-      # print(obs.shape)
       with torch.no_grad():
-        # print(self.policy_net(obs))
+        obs = torch.as_tensor(obs,dtype=torch.float32,device=self.device).view(1,-1)
         q_values = self.policy_net(obs)
-        # print(q_values)
-        # print(q_values.max(1))
-        # print(q_values.max(1).indices.max())
-        # print("network")
         return q_values.max(1).indices.max()
     else:
-      # print("random")
       return torch.tensor([[self.env.action_space.sample()]], device=self.device, dtype=torch.long)
         
   def update(self,batch_size):
@@ -86,8 +74,8 @@ class Defender_Agent():
     next_batch = self.memory.sample(batch_size)
     state_batch,next_state_batch,reward_batch,terminated_batch,action_batch = zip(*next_batch)
     
-    state_batch = np.array(state_batch).flatten().reshape(10,batch_size).transpose()
-    next_state_batch = np.array(next_state_batch).flatten().reshape(10,batch_size).transpose()
+    state_batch = torch.as_tensor(np.array(state_batch),dtype=torch.float32,device=self.device).view(batch_size,-1)
+    next_state_batch = torch.as_tensor(np.array(next_state_batch),dtype=torch.float32,device=self.device).view(batch_size,-1)
     
     state_batch = torch.FloatTensor(state_batch).to(self.device)
     next_state_batch = torch.FloatTensor(next_state_batch).to(self.device)
@@ -115,7 +103,7 @@ class Defender_Agent():
     
   def decay_epsilon(self):
     # TODO see which function is better 
-    # self.epsilon = max(self.final_epsilon, self.epsilon - self.epsilon_decay)
+    # self.epsilon = max(self.eps_end, self.epsilon - self.eps_decay)
     self.epsilon = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1. * self.steps_done / self.eps_decay)
     
   def update_targetNet(self):
